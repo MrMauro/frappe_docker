@@ -4,7 +4,9 @@ services:
       - traefik.enable=true
       - traefik.http.services.frontend.loadbalancer.server.port=8080
       - traefik.http.routers.frontend-http.entrypoints=websecure
-      - traefik.http.routers.frontend-http.tls.certresolver=main-resolver
+      # Clouflare
+      # - traefik.http.routers.frontend-http.tls.certresolver=main-resolver
+      - traefik.http.routers.frontend-http.tls.certresolver=cloudflare
       - traefik.http.routers.frontend-http.rule=HostRegexp(`{any:.+}`)
 
   proxy:
@@ -26,6 +28,9 @@ services:
     volumes:
       - cert-data:/letsencrypt
       - /var/run/docker.sock:/var/run/docker.sock:ro
+    # Cloudflare Token (Define CF_DNS_API_TOKEN at .env)
+    environment:
+      - CF_DNS_API_TOKEN=${CF_DNS_API_TOKEN:?No Cloudflare key set}
 
 volumes:
   cert-data:
