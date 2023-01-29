@@ -1,0 +1,34 @@
+# Untested
+# Its purpose is to set a folder on the host available on the
+# ERPNext `environment` to facilitate files exchange.
+# This should be called with docker option --env pointing to the shared .env
+# file to use its definitions (ie. PROJECT_NAME).
+
+version: "3.7"
+services:
+  exchange:
+#    image: custom_erpnext:staging
+    image: busybox:latest
+    # entrypoint: ["bash", "-c"]
+    entrypoint: /bin/sh
+    # To allow terminal
+    stdin_open: true # docker run -i
+    tty: true        # docker run -t
+
+    volumes:
+      - ./exchange:/srv/exchange
+      - "sites:/home/frappe/frappe-bench/sites"
+    networks:
+      - erpnext-network
+
+networks:
+  erpnext-network:
+    external: true
+    name: ${PROJECT_NAME:-erpnext}_default
+    # name: frappe_docker_default
+
+volumes:
+  sites:
+    external: true
+    name: ${PROJECT_NAME:-erpnext}_sites
+    # name: frappe_docker_sites
